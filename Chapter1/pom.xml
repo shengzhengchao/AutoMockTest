@@ -30,6 +30,10 @@
             <artifactId>lombok</artifactId>
             <version>1.16.20</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
