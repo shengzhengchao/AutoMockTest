@@ -109,7 +109,7 @@ public class SseDemoController {
 //        String mockFilePath = "src/main/resources/mocked_response.txt";
 //        FileReader fileReader = null;
         PrintWriter writer = null;
-        char[] buf = new char[8];
+        char[] buf = new char[16];
         int readLen = 0;
 
         try {
@@ -119,7 +119,7 @@ public class SseDemoController {
             while ((readLen = reader.read(buf)) != -1) {
                 writer.write(new String(buf, 0, readLen));
                 writer.flush();
-                Thread.sleep(50);
+                Thread.sleep(100);
             }
 
         }  catch (InterruptedException | IOException e) {
