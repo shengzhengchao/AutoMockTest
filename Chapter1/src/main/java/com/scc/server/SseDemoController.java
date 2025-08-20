@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class SseDemoController {
@@ -101,7 +102,7 @@ public class SseDemoController {
 
         // 自定义格式2：无前缀纯文本
         //使用spring的resourceLoader获取流数据
-        Resource resource = resourceLoader.getResource("classpath:mocked_response.txt");
+        Resource resource = resourceLoader.getResource("file:./config/mocked_response.txt");
         InputStream inputStream = resource.getInputStream();
         Reader reader = null;
 
@@ -113,7 +114,7 @@ public class SseDemoController {
 
         try {
 //            fileReader = new FileReader(mockFilePath);
-            reader = new InputStreamReader(inputStream);
+            reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             writer = response.getWriter();
             while ((readLen = reader.read(buf)) != -1) {
                 writer.write(new String(buf, 0, readLen));
