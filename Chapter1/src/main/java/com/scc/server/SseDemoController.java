@@ -1,5 +1,8 @@
 package com.scc.server;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +14,8 @@ import java.io.*;
 
 @RestController
 public class SseDemoController {
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @RequestMapping(value = "/sse-demo", produces = "text/event-stream", method = RequestMethod.GET)
     public SseEmitter  streamData() {
@@ -95,17 +100,22 @@ public class SseDemoController {
         response.setHeader("Connection", "keep-alive");
 
         // 自定义格式2：无前缀纯文本
-        //使用字符输入流读取文件
-        String mockFilePath = "src/main/resources/mocked_response.txt";
-        FileReader fileReader = null;
+        //使用spring的resourceLoader获取流数据
+        Resource resource = resourceLoader.getResource("classpath:mocked_response.txt");
+        InputStream inputStream = resource.getInputStream();
+        Reader reader = null;
+
+//        String mockFilePath = "src/main/resources/mocked_response.txt";
+//        FileReader fileReader = null;
         PrintWriter writer = null;
         char[] buf = new char[8];
         int readLen = 0;
 
         try {
-            fileReader = new FileReader(mockFilePath);
+//            fileReader = new FileReader(mockFilePath);
+            reader = new InputStreamReader(inputStream);
             writer = response.getWriter();
-            while ((readLen = fileReader.read(buf)) != -1) {
+            while ((readLen = reader.read(buf)) != -1) {
                 writer.write(new String(buf, 0, readLen));
                 writer.flush();
                 Thread.sleep(50);
@@ -115,8 +125,8 @@ public class SseDemoController {
             e.printStackTrace();
         } finally {
             try {
-                if (fileReader != null){
-                    fileReader.close();
+                if (reader != null){
+                    reader.close();
                 }
                 if (writer!= null) {
                     writer.close();

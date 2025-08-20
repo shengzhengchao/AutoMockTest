@@ -4,6 +4,7 @@ import com.scc.bean.User;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Properties;
 
 public class IOStudy {
     //FileInputStream文件字节输入流
@@ -114,4 +115,98 @@ public class IOStudy {
         System.out.println("耗时: " + (endTime - startTime) + "ms");
         System.out.println("复制成功!");
     }
+
+    @Test
+    public void copyTxt() {
+        String srcFilePath = "src/main/resources/ppt正文.txt";
+        String dstFilePath = "src/main/resources/ppt正文2.txt";
+        FileReader fileReader = null;
+        FileWriter fileWriter = null;
+        char[] chars = new char[8];
+        int readLen = 0;
+        //创建fileReader对象
+        try {
+            fileReader = new FileReader(srcFilePath);
+            fileWriter = new FileWriter(dstFilePath, true);
+            //循环读取文件中字符
+            while ((readLen = fileReader.read(chars)) != -1) {
+                System.out.print(new String(chars, 0, readLen));
+                fileWriter.write(new String(chars, 0, readLen));
+//                fileWriter.flush();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fileReader.close();
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("\n数据写入完成");
+    }
+
+    @Test
+    public void copyByBufStream() {
+        String srcFilePath = "src/main/resources/ppt正文.txt";
+        String dstFilePath = "src/main/resources/ppt正文3.txt";
+        BufferedReader bufferedReader = null;
+        BufferedWriter bufferedWriter = null;
+        String line = null;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(srcFilePath));
+            bufferedWriter = new BufferedWriter(new FileWriter(dstFilePath, true));
+            while ((line = bufferedReader.readLine()) != null) {
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedReader != null){
+                    bufferedReader.close();
+                }
+                if (bufferedWriter != null){
+                    bufferedWriter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+    }
+
+    @Test
+    public void readProperties() {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileReader("src/main/resources/mysql.properties"));
+//            System.setOut(new PrintStream("src/main/resources/mysql2.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        properties.list(System.out);
+        System.out.println(properties.getProperty("ip"));
+        properties.setProperty("port", "10086");
+        try {
+            properties.store(new FileWriter("src/main/resources/mysql2.properties", true),
+                    "这是备注");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
